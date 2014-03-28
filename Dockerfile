@@ -1,8 +1,5 @@
 FROM ubuntu:13.10
-
-MAINTAINER Iliyan Trifonov <iliyan.trifonov@gmail.com>
-
-RUN cat /proc/mounts > /etc/mtab
+MAINTAINER Milos Bejda <mbejda@live.com>
 
 RUN echo "deb mirror://mirrors.ubuntu.com/mirrors.txt saucy main restricted universe multiverse" > /etc/apt/sources.list;\
 	echo "deb mirror://mirrors.ubuntu.com/mirrors.txt saucy-updates main restricted universe multiverse" >> /etc/apt/sources.list;\
@@ -18,7 +15,18 @@ RUN export DEBIAN_FRONTEND=noninteractive;\
 	apt-get -qq install percona-server-server-5.5 percona-server-client-5.5 \
 	php5-fpm php5-mysqlnd php5-mcrypt php5-cli \
 	nginx-full \
+	build-essential \
+	proftpd \
 	curl openssh-server
+
+
+
+ADD proftpd.conf /etc/proftpd/proftpd.conf
+RUN chown root:root /etc/proftpd/proftpd.conf
+
+
+
+
 
 RUN mkdir /var/run/sshd;\
 	echo "root:root"|chpasswd;\
@@ -27,7 +35,7 @@ RUN mkdir /var/run/sshd;\
 
 RUN curl -L https://raw.github.com/wp-cli/builds/gh-pages/phar/wp-cli.phar > wp-cli.phar;\
 	chmod +x wp-cli.phar;\
-	mv wp-cli.phar /usr/bin/wp
+	mv wp-cli.phar /bin/wp
 
 RUN sed -i 's|listen.*=.*|listen=127.0.0.1:9000|' /etc/php5/fpm/pool.d/www.conf;\
 	sed -i 's|;cgi.fix_pathinfo.*=.*|cgi.fix_pathinfo=0|' /etc/php5/fpm/php.ini;\
@@ -35,26 +43,27 @@ RUN sed -i 's|listen.*=.*|listen=127.0.0.1:9000|' /etc/php5/fpm/pool.d/www.conf;
 
 RUN mkdir -p /var/www/wordpress;\
 	chown -R www-data:www-data /var/www;\
-	chmod 0755 /var/www
-
+	chmod -R 0755 /var/www
+RUN /etc/init.d/proftpd start
 RUN NGINXCONFFILE=/etc/nginx/nginx.conf;\
 	echo "daemon off;" | cat - $NGINXCONFFILE > $NGINXCONFFILE.tmp;\
 	mv $NGINXCONFFILE.tmp $NGINXCONFFILE
 
 ADD nginx/default /etc/nginx/sites-available/default
+ADD wordpress /var/www/wordpress
 
-RUN /etc/init.d/mysql start;\
-	sleep 3;\
-	echo 'CREATE DATABASE wordpress; GRANT ALL PRIVILEGES ON wordpress.* TO "wordpress"@"127.0.0.1" IDENTIFIED BY "wordpress"; FLUSH PRIVILEGES;' | mysql -h127.0.0.1 -uroot;\
-	su - www-data -c '\
-		cd wordpress;\
-		wp core download;\
-		wp core config --dbhost="127.0.0.1" --dbname="wordpress" --dbuser="wordpress" --dbpass="wordpress";\
-		wp core install --url="127.0.0.1" --title="My Docker Wordpress Blog!" --admin_user="admin" --admin_password="admin" --admin_email="me@127.0.0.1"';\
-	/etc/init.d/mysql stop
 
-ADD shell/run_all_servers.sh /
 
-EXPOSE 80 22
+ENV SITEURL="127.0.0.1"
+ENV PLUGINS=""
+ENV WPMEMORY="9M"
+ENV WPMEMORYMAX="10M"
+ENV WPADMIN="admin"
+ENV WPPASSWORD="password"
+ENV WPEMAIL="admin@admin.com"
 
-CMD ["sh", "/run_all_servers.sh"]
+ADD shell/install.sh /
+
+EXPOSE 80 22 20 21
+
+CMD ["bash", "/install.sh"]
