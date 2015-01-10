@@ -18,15 +18,9 @@ RUN export DEBIAN_FRONTEND=noninteractive;\
 	build-essential \
 	proftpd \
 	curl openssh-server
-
-
-
+	
 ADD proftpd.conf /etc/proftpd/proftpd.conf
 RUN chown root:root /etc/proftpd/proftpd.conf
-
-
-
-
 
 RUN mkdir /var/run/sshd;\
 	echo "root:root"|chpasswd;\
