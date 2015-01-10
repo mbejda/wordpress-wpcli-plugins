@@ -48,13 +48,13 @@ ADD wordpress /var/www/wordpress
 
 
 
-ENV SITEURL="127.0.0.1"
-ENV PLUGINS=""
-ENV WPMEMORY="9M"
-ENV WPMEMORYMAX="10M"
-ENV WPADMIN="admin"
-ENV WPPASSWORD="password"
-ENV WPEMAIL="admin@admin.com"
+ENV SITEURL "127.0.0.1"
+ENV PLUGINS ""
+ENV WPMEMORY "9M"
+ENV WPMEMORYMAX "10M"
+ENV WPADMIN "admin"
+ENV WPPASSWORD "password"
+ENV WPEMAIL "admin@admin.com"
 
 ADD shell/install.sh /
 
