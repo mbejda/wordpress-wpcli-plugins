@@ -24,9 +24,9 @@ define( 'EMPTY_TRASH_DAYS', 4 );
 PHP
 echo $SITEURL
 if [ -n "$PLUGINS" ]; then
-wp core install --path=/var/www/wordpress --url="$SITEURL" --title="$WPTITLE" --admin_user="$WPADMIN" --admin_password="$WPPASSWORD" --admin_email="$WPEMAIL" --allow-root
+wp core install --path=/var/www/wordpress --url=$SITEURL --title=$WPTITLE --admin_user=${WPADMIN} --admin_password=${WPPASSWORD} --admin_email=${WPEMAIL} --allow-root
 sleep 3;
-IFS=';' read -ra ADDR <<< "$PLUGINS"
+IFS=';' read -ra ADDR <<< ${PLUGINS}
 for i in "${ADDR[@]}"; do
 	echo "$i";
     	wp plugin install $i --activate --allow-root
