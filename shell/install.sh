@@ -8,8 +8,8 @@
 cd /var/www/wordpress
 #wp core download --allow-root
 wp core config --path=/var/www/wordpress --dbhost="127.0.0.1" --dbname="wordpress" --dbuser="wordpress" --dbpass="wordpress" --allow-root --extra-php <<PHP
-define( 'WP_DEBUG', true );
-define( 'WP_DEBUG_LOG', true );
+define( 'WP_DEBUG', false );
+define( 'WP_DEBUG_LOG', false );
 define('FTP_USER', 'ftp'); 
 define( 'FTP_PASS', 'ftp' );
 define('FTP_HOST', 'localhost');
@@ -23,14 +23,15 @@ define( 'WP_CRON_LOCK_TIMEOUT', 120 );
 define( 'EMPTY_TRASH_DAYS', 4 );
 PHP
 echo $SITEURL
-wp core install --path=/var/www/wordpress --url="$SITEURL" --title="wordpress" --admin_user="$WPADMIN" --admin_password="$WPPASSWORD" --admin_email="$WPEMAIL" --allow-root
+if [ -n "$PLUGINS" ]; then
+wp core install --path=/var/www/wordpress --url="$SITEURL" --title="$WPTITLE" --admin_user="$WPADMIN" --admin_password="$WPPASSWORD" --admin_email="$WPEMAIL" --allow-root
 sleep 3;
-
 IFS=';' read -ra ADDR <<< "$PLUGINS"
 for i in "${ADDR[@]}"; do
 	echo "$i";
     	wp plugin install $i --activate --allow-root
 done
+fi
 chmod 777 -R /var/www;
 
 

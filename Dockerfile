@@ -55,6 +55,7 @@ ENV WPMEMORYMAX "10M"
 ENV WPADMIN "admin"
 ENV WPPASSWORD "password"
 ENV WPEMAIL "admin@admin.com"
+ENV WPTITLE "Title"
 
 ADD shell/install.sh /
 
