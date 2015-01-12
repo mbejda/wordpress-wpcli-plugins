@@ -2,12 +2,10 @@
 /etc/init.d/ssh start;
 /etc/init.d/proftpd start;
 /etc/init.d/mysql start;\
-	sleep 3;\
-	echo 'CREATE DATABASE wordpress; GRANT ALL PRIVILEGES ON wordpress.* TO "wordpress"@"127.0.0.1" IDENTIFIED BY "wordpress"; FLUSH PRIVILEGES;' | mysql -h127.0.0.1 -uroot
-
+	sleep 3;
 cd /var/www/wordpress
-#wp core download --allow-root
-wp core config --path=/var/www/wordpress --dbhost="127.0.0.1" --dbname="wordpress" --dbuser="wordpress" --dbpass="wordpress" --allow-root --extra-php <<PHP
+wp core download --allow-root
+wp core config --path=/var/www/wordpress --dbhost="127.0.0.1" --dbname="wordpress" --dbuser="root" --allow-root --extra-php <<PHP
 define( 'WP_DEBUG', false );
 define( 'WP_DEBUG_LOG', false );
 define('FTP_USER', 'ftp'); 
@@ -22,7 +20,9 @@ define( 'WP_CACHE', false );
 define( 'WP_CRON_LOCK_TIMEOUT', 120 );
 define( 'EMPTY_TRASH_DAYS', 4 );
 PHP
-echo $SITEURL
+echo $SITEURL;
+wp db create;
+sleep 1;
 if [ -n "$PLUGINS" ]; then
 wp core install --path=/var/www/wordpress --url=$SITEURL --title=$WPTITLE --admin_user=${WPADMIN} --admin_password=${WPPASSWORD} --admin_email=${WPEMAIL} --allow-root
 sleep 3;

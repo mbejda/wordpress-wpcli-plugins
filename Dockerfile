@@ -44,7 +44,6 @@ RUN NGINXCONFFILE=/etc/nginx/nginx.conf;\
 	mv $NGINXCONFFILE.tmp $NGINXCONFFILE
 
 ADD nginx/default /etc/nginx/sites-available/default
-ADD wordpress /var/www/wordpress
 
 
 
