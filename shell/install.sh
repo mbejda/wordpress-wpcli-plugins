@@ -21,7 +21,7 @@ define( 'WP_CRON_LOCK_TIMEOUT', 120 );
 define( 'EMPTY_TRASH_DAYS', 4 );
 PHP
 echo $SITEURL;
-wp db create;
+wp db create --allow-root;
 sleep 1;
 if [ -n "$PLUGINS" ]; then
 wp core install --path=/var/www/wordpress --url=$SITEURL --title=$WPTITLE --admin_user=${WPADMIN} --admin_password=${WPPASSWORD} --admin_email=${WPEMAIL} --allow-root
